@@ -54,8 +54,8 @@ class UserController extends Controller
         $storeData = $request->all();
         $validate = Validator::make($storeData, [
             'name' => 'required|unique:users',
-            'email' => 'required|email:rfc,dns|unique:users',
-            'password' => 'required'
+            'password' => 'required',
+            'imgUrl' => ''
         ]); // membuat rule validasi input
 
         if ($validate->fails())
@@ -63,9 +63,11 @@ class UserController extends Controller
 
         $storeData['password'] = bcrypt($request->password); // enkripsi password
         $user = User::create($storeData); // membuat user baru
+        $arrayUser = [$user];
+
         return response([
             'message' => 'Add User Success',
-            'user' => $user
+            'user' => $arrayUser
         ], 200); // return data user dalam bentuk json
     }
 
@@ -82,9 +84,10 @@ class UserController extends Controller
         } // return message saat data user tidak ditemukan
 
         if ($user->delete()) {
+            $arrayUser = [$user];
             return response([
                 'message' => 'Delete User Success',
-                'data' => $user
+                'data' => $arrayUser
             ], 200);
         } // return message saat berhasil menghapus data user
 
@@ -108,8 +111,8 @@ class UserController extends Controller
         $updateData = $request->all(); // mengambil semua input dari api client
         $validate = Validator::make($updateData, [
             'name' => ['max:60', 'required', Rule::unique('users')->ignore($user)],
-            'email' => ['required', 'email:rfc,dns', Rule::unique('users')->ignore($user)],
-            'password' => 'required'
+            'password' => 'required',
+            'imgUrl' => ''
         ]); // membuat rule validasi input
 
         if ($validate->fails())
@@ -118,13 +121,14 @@ class UserController extends Controller
         $updateData['password'] = bcrypt($request->password); // enkripsi password
 
         $user->name = $updateData['name'];
-        $user->email = $updateData['email'];
         $user->password = $updateData['password'];
+        $user->imgUrl = $updateData['imgUrl'];
 
         if ($user->save()) {
+            $arrayUser = [$user];
             return response([
                 'message' => 'Update User Success',
-                'data' => $user
+                'data' => $arrayUser
             ], 200);
         } // return data user yang telah di edit dalam bentuk json
         return response([

@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('register', 'Api\AuthController@register');
 Route::post('login', 'Api\AuthController@login');
+Route::post('verify/{id}', 'Api\AuthController@verify');
 
 Route::get('jadwal', 'Api\JadwalController@index');
 Route::get('jadwal/{id}', 'Api\JadwalController@show');
